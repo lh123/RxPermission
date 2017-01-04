@@ -77,15 +77,15 @@ public class RxPermission {
                 observables.add(Observable.just(new Permission(permission, true)));
             }
         }
-        Intent intent = new Intent(mContext.get(), PermissionActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.putExtra("Permission", needPermissions.toArray(new String[needPermissions.size()]));
         for (int i = 0; i < needPermissions.size(); i++) {
             PublishSubject<Permission> subject = PublishSubject.create();
             mSubjects.put(needPermissions.get(i), subject);
             observables.add(subject);
         }
         if (needPermissions.size() > 0) {
+            Intent intent = new Intent(mContext.get(), PermissionActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            intent.putExtra("Permission", needPermissions.toArray(new String[needPermissions.size()]));
             mContext.get().startActivity(intent);
         }
         return Observable.concat(observables);
