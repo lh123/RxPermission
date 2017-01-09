@@ -11,7 +11,7 @@ import android.widget.TextView;
 import com.lh.permissionlibrary.Permission;
 import com.lh.permissionlibrary.RxPermission;
 
-import rx.functions.Action1;
+import io.reactivex.functions.Consumer;
 
 /**
  * Created by home on 2017/1/4.
@@ -35,9 +35,9 @@ public class MainActivity extends AppCompatActivity {
                 RxPermission.getInstance(MainActivity.this)
                         .requsetEach(Manifest.permission.READ_SMS,
                                 Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                        .subscribe(new Action1<Permission>() {
+                        .subscribe(new Consumer<Permission>() {
                             @Override
-                            public void call(Permission permission) {
+                            public void accept(Permission permission) throws Exception {
                                 mTvResult.append(permission.getName());
                                 mTvResult.append(":");
                                 mTvResult.append(permission.isGranted()+"\n");

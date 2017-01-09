@@ -12,9 +12,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import rx.Observable;
-import rx.functions.Func1;
-import rx.subjects.PublishSubject;
+import io.reactivex.Observable;
+import io.reactivex.ObservableSource;
+import io.reactivex.functions.Function;
+import io.reactivex.subjects.PublishSubject;
 
 /**
  * Created by home on 2017/1/4.
@@ -23,7 +24,7 @@ import rx.subjects.PublishSubject;
 
 public class RxPermission {
 
-    public static final int REQUEST_CODE = 100;
+    static final int REQUEST_CODE = 100;
 
     private WeakReference<Context> mContext;
     private Map<String, PublishSubject<Permission>> mSubjects;
@@ -47,9 +48,9 @@ public class RxPermission {
      * @return 如果有一个权限未通过则返回false
      */
     public Observable<Boolean> requset(String... permissions) {
-        return requsetEach(permissions).buffer(permissions.length).flatMap(new Func1<List<Permission>, Observable<Boolean>>() {
+        return requsetEach(permissions).buffer(permissions.length).flatMap(new Function<List<Permission>, ObservableSource<Boolean>>() {
             @Override
-            public Observable<Boolean> call(List<Permission> permissions) {
+            public ObservableSource<Boolean> apply(List<Permission> permissions) throws Exception {
                 for (Permission permission : permissions) {
                     if (!permission.isGranted()) {
                         return Observable.just(false);
@@ -100,7 +101,7 @@ public class RxPermission {
                 }
                 mSubjects.remove(permissions[i]);
                 subject.onNext(new Permission(permissions[i], grantResults[i] == PackageManager.PERMISSION_GRANTED));
-                subject.onCompleted();
+                subject.onComplete();
             }
         }
     }
